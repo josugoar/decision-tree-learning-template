@@ -22,15 +22,20 @@ data <- read.csv(file = filename, sep =",", header = TRUE)
 index <- c(2, 3, 6, 7, 9, 11, 12)
 data[ , index] <- lapply(data[ , index], as.factor)
 
-ggplot(data, aes(x=Age, y=HeartDisease)) + geom_point()
-ggplot(data, aes(x=RestingBP, y=HeartDisease)) + geom_point()
+for (col_name in colnames(data)) {
+  if (col_name != "HeartDisease") {
+    print(ggplot(data, aes(x=.data[[col_name]], y=HeartDisease)) + geom_point())
+  }
+}
 
 data$Cholesterol <- ifelse(data$Cholesterol <= 200, "Normal", "High")
 data$Age <- cut(data$Age, breaks = 4)
 
-ggplot(data, aes(x=ST_Slope, fill=ST_Slope)) + geom_bar() +
-  geom_text(stat="count", aes(label=..count..), vjust=-0.25) +
-  labs(x = "ST_Slope", y = "Frequency")
+for (col_name in colnames(data)) {
+  print(ggplot(data, aes(x=.data[[col_name]], fill=.data[[col_name]])) + geom_bar() +
+          geom_text(stat="count", aes(label=after_stat(count)), vjust=-0.25) +
+          labs(x = col_name, y = "Frequency"))
+}
 
 # Percentaje of training examples
 training_p <- 0.8
