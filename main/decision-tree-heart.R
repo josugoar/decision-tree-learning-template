@@ -22,16 +22,15 @@ data <- read.csv(file = filename, sep =",", header = TRUE)
 index <- c(2, 3, 6, 7, 9, 11, 12)
 data[ , index] <- lapply(data[ , index], as.factor)
 
-for (col_name in colnames(data)) {
+for (col_name in c("Age", "RestingBP", "Cholesterol", "MaxHR", "Oldpeak")) {
   if (col_name != "HeartDisease") {
     print(ggplot(data, aes(x=.data[[col_name]], y=HeartDisease)) + geom_point())
   }
 }
 
 data$Cholesterol <- ifelse(data$Cholesterol <= 200, "Normal", "High")
-data$Age <- cut(data$Age, breaks = 4)
 
-for (col_name in colnames(data)) {
+for (col_name in c("Age", "Sex", "ChestPainType", "Cholesterol", "FastingBS", "RestingECG", "ExerciseAngina", "ST_Slope", "HeartDisease")) {
   print(ggplot(data, aes(x=.data[[col_name]], fill=.data[[col_name]])) + geom_bar() +
           geom_text(stat="count", aes(label=after_stat(count)), vjust=-0.25) +
           labs(x = col_name, y = "Frequency"))
@@ -50,6 +49,7 @@ test_data     <- data[-training_indexes, ] # Extract data with the indexes not i
 
 best_model <- NULL
 best_acuraccy <- 0
+
 for (i in 1:10) {
   # Create Linear Model using training data. Formula = all the columns except HeartDisease
   model <- rpart(formula = HeartDisease ~., data = training_data)
@@ -99,3 +99,9 @@ rpart.rules(best_model,
             when = "IF", 
             and = "&&", 
             extra = 4)
+
+print("Identify people who within 10 years are susceptible to developing heart disease")
+prediction_results_1 <- predict(model, data, type = "class")
+data$Age <- data$Age + 10
+prediction_results_2 <- predict(model, data, type = "class")
+print(which(prediction_results_1 != prediction_results_2))
