@@ -39,18 +39,18 @@ for (col_name in c("Age", "Sex", "ChestPainType", "Cholesterol", "FastingBS", "R
 # Percentaje of training examples
 training_p <- 0.8
 
-# Generate data partition 80% training / 20% test. The result is a vector with the indexes 
-# of the examples that will be used for the training of the model.
-training_indexes <- createDataPartition(y = data$HeartDisease, p = training_p, list = FALSE)
-
-# Split training and test data
-training_data <- data[training_indexes, ]  # Extract training data using training_indexes
-test_data     <- data[-training_indexes, ] # Extract data with the indexes not included in training_indexes 
-
 best_model <- NULL
 best_acuraccy <- 0
 
 for (i in 1:10) {
+  # Generate data partition 80% training / 20% test. The result is a vector with the indexes 
+  # of the examples that will be used for the training of the model.
+  training_indexes <- createDataPartition(y = data$HeartDisease, p = training_p, list = FALSE)
+  
+  # Split training and test data
+  training_data <- data[training_indexes, ]  # Extract training data using training_indexes
+  test_data     <- data[-training_indexes, ] # Extract data with the indexes not included in training_indexes 
+  
   # Create Linear Model using training data. Formula = all the columns except HeartDisease
   model <- rpart(formula = HeartDisease ~., data = training_data)
   
