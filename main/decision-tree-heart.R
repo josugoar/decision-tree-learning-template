@@ -30,7 +30,7 @@ for (col_name in c("Age", "RestingBP", "Cholesterol", "MaxHR", "Oldpeak")) {
 
 data$Cholesterol <- ifelse(data$Cholesterol <= 200, "Normal", "High")
 
-for (col_name in c("Age", "Sex", "ChestPainType", "Cholesterol", "FastingBS", "RestingECG", "ExerciseAngina", "ST_Slope", "HeartDisease")) {
+for (col_name in c("Sex", "ChestPainType", "Cholesterol", "FastingBS", "RestingECG", "ExerciseAngina", "ST_Slope", "HeartDisease")) {
   print(ggplot(data, aes(x=.data[[col_name]], fill=.data[[col_name]])) + geom_bar() +
           geom_text(stat="count", aes(label=after_stat(count)), vjust=-0.25) +
           labs(x = col_name, y = "Frequency"))
@@ -92,16 +92,16 @@ rpart.plot(best_model,
            sub = best_acuraccy)
 
 # Print the rules that represent the Decision Tree
-rpart.rules(best_model, 
+print(rpart.rules(best_model, 
             style="wide", 
             cover = TRUE, 
             eq = "=", 
             when = "IF", 
             and = "&&", 
-            extra = 4)
+            extra = 4))
 
 print("Identify people who within 10 years are susceptible to developing heart disease")
-prediction_results_1 <- predict(model, data, type = "class")
+prediction_results_1 <- predict(best_model, data, type = "class")
 data$Age <- data$Age + 10
-prediction_results_2 <- predict(model, data, type = "class")
+prediction_results_2 <- predict(best_model, data, type = "class")
 print(which(prediction_results_1 != prediction_results_2))
